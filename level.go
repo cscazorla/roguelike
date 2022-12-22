@@ -1,27 +1,11 @@
 package main
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"log"
 )
-
-type GameData struct {
-	ScreenWidth  int
-	ScreenHeight int
-	TileWidth    int
-	TileHeight   int
-}
-
-func NewGameData() GameData {
-	g := GameData{
-		ScreenWidth:  80,
-		ScreenHeight: 50,
-		TileWidth:    16,
-		TileHeight:   16,
-	}
-	return g
-}
 
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
@@ -31,18 +15,31 @@ type MapTile struct {
 	Image   *ebiten.Image // Pointer to an ebiten Image
 }
 
+// Level holds the tile information for a complete dungeon level.
+type Level struct {
+	Tiles []MapTile
+}
+
+// NewLevel creates a new game level in a dungeon.
+func NewLevel() Level {
+	l := Level{}
+	tiles := l.CreateTiles()
+	l.Tiles = tiles
+	return l
+}
+
 // Tiles will be stoted in one slice. We will use GetIndexFromXY to
 // determine which tile to return.
 // GetIndexFromXY gets the index of the map array from a given X,Y TILE coordinate.
 // This coordinate is logical tiles, not pixels.
-func GetIndexFromXY(x int, y int) int {
+func (level *Level) GetIndexFromXY(x int, y int) int {
 	gd := NewGameData()
 	return (y * gd.ScreenWidth) + x
 }
 
 // CreateTiles creates the initial map. It consists of all floor tiles
 // except the outer bounds of the window, which will be walls.
-func CreateTiles() []MapTile {
+func (level *Level) CreateTiles() []MapTile {
 	gd := NewGameData()
 	tiles := make([]MapTile, 0)
 

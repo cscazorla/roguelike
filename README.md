@@ -12,3 +12,12 @@ This is a basic roguelike implemented in Go for learning purposes using [Rogueba
 ## Assets
 
 This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) tiles.
+
+## Composition of a GameMap
+
+The GameMap holds all the information for the entire world. The hierarchy is as follows:
+
+* A GameMap is a collection of Dungeons
+  * A Dungeon is a collection of Levels
+    * A Level is a collection of MapTiles
+      * A MapTile is a slice of tiles
