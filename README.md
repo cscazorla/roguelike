@@ -19,7 +19,7 @@ This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) ti
 - [x] Project structure
 - [x] Basic MapTiles
 - [x] Adding ECS capabilities
-- [ ] Collisions
+- [x] Collisions with walls
 - [ ] Rooms
 - [ ] Corridors
 - [ ] Turn based
