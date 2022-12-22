@@ -18,8 +18,8 @@ type Game struct {
 // NewGame creates a new Game Object and initializes the data
 func NewGame() *Game {
 	g := &Game{}
-	world, tags := InitializeWorld()
 	g.Map = NewGameMap()
+	world, tags := InitializeWorld(g.Map.CurrentLevel)
 	g.World = world
 	g.WorldTags = tags
 	return g
