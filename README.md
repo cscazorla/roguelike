@@ -4,6 +4,8 @@
 
 This is a basic roguelike implemented in Go for learning purposes. This implementation follows [Roguebasin route map](http://www.roguebasin.com/index.php?title=How_to_Write_a_Roguelike_in_15_Steps) on how to write a Roguelike in 15 steps.
 
+![My first Roguelike in Go](images/screnshoot.png)
+
 ## Requirements
 
 * [Go 1.19](https://go.dev/)
@@ -20,7 +22,7 @@ This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) ti
 - [x] Basic MapTiles
 - [x] Adding ECS capabilities
 - [x] Collisions with walls
-- [ ] Rooms
+- [x] Rooms
 - [ ] Corridors
 - [ ] Turn based
 - [ ] Field of View
