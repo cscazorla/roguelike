@@ -36,7 +36,7 @@ func (g *Game) Update() error {
 // Draw is called each on each frame loop
 func (g *Game) Draw(screen *ebiten.Image) {
 	//Draw the Map
-	level := g.Map.Dungeons[0].Levels[0]
+	level := g.Map.CurrentLevel
 	level.DrawLevel(screen)
 
 	// Draw other renderables
