@@ -26,18 +26,9 @@ func (g *Game) Update() error {
 
 // Draw is called each on each frame loop
 func (g *Game) Draw(screen *ebiten.Image) {
-	gd := NewGameData()
-
 	//Draw the Map
 	level := g.Map.Dungeons[0].Levels[0]
-	for x := 0; x < gd.ScreenWidth; x++ {
-		for y := 0; y < gd.ScreenHeight; y++ {
-			tile := level.Tiles[level.GetIndexFromXY(x, y)]
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
-			screen.DrawImage(tile.Image, op)
-		}
-	}
+	level.DrawLevel(screen)
 }
 
 // Layout will return the screen dimensions.
