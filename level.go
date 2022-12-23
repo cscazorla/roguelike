@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/norendren/go-fov/fov"
 )
 
 // Each of the map tiles will be represented  by one of these structures
@@ -18,8 +19,9 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles []MapTile
-	Rooms []Rect
+	Tiles         []MapTile
+	Rooms         []Rect
+	PlayerVisible *fov.View
 }
 
 // NewLevel creates a new game level in a dungeon.
@@ -28,6 +30,7 @@ func NewLevel() Level {
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
+	l.PlayerVisible = fov.New()
 	return l
 }
 
@@ -156,14 +159,29 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	}
 }
 
+func (level Level) InBounds(x, y int) bool {
+	gd := NewGameData()
+	if x < 0 || x > gd.Cols || y < 0 || y > gd.Rows {
+		return false
+	}
+	return true
+}
+
+func (level Level) IsOpaque(x, y int) bool {
+	idx := level.GetIndexFromXY(x, y)
+	return level.Tiles[idx].Blocked
+}
+
 func (level *Level) DrawLevel(screen *ebiten.Image) {
 	gd := NewGameData()
 	for x := 0; x < gd.Cols; x++ {
 		for y := 0; y < gd.Rows; y++ {
-			tile := level.Tiles[level.GetIndexFromXY(x, y)]
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
-			screen.DrawImage(tile.Image, op)
+			if level.PlayerVisible.IsVisible(x, y) {
+				tile := level.Tiles[level.GetIndexFromXY(x, y)]
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
+				screen.DrawImage(tile.Image, op)
+			}
 		}
 	}
 }
