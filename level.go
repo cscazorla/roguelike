@@ -9,6 +9,13 @@ import (
 	"github.com/norendren/go-fov/fov"
 )
 
+type TileType int
+
+const (
+	WALL TileType = iota
+	FLOOR
+)
+
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
 	PixelX     int // Upper left corner of the tile
@@ -16,6 +23,7 @@ type MapTile struct {
 	Blocked    bool          // The tile should block the player or monster ?
 	Image      *ebiten.Image // Pointer to an ebiten Image
 	IsRevealed bool          // Has the tile has, at one time, been revealed to us by FoV?
+	TileType   TileType
 }
 
 // Level holds the tile information for a complete dungeon level.
@@ -62,6 +70,7 @@ func (level *Level) createTiles() []MapTile {
 				Blocked:    true,
 				Image:      wall,
 				IsRevealed: false,
+				TileType:   WALL,
 			}
 			tiles[index] = tile
 		}
@@ -74,6 +83,7 @@ func (level *Level) createRoom(room Rect) {
 		for x := room.X1 + 1; x < room.X2; x++ {
 			index := level.GetIndexFromXY(x, y)
 			level.Tiles[index].Blocked = false
+			level.Tiles[index].TileType = FLOOR
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
 				log.Fatal(err)
@@ -136,6 +146,7 @@ func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
 		index := level.GetIndexFromXY(int(x), y)
 		if index > 0 && index < gd.Rows*gd.Cols {
 			level.Tiles[index].Blocked = false
+			level.Tiles[index].TileType = FLOOR
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
 				log.Fatal(err)
@@ -149,8 +160,8 @@ func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
 	gd := NewGameData()
 	for y := math.Min(float64(y1), float64(y2)); y < math.Max(float64(y1), float64(y2))+1; y++ {
 		index := level.GetIndexFromXY(x, int(y))
-
 		if index > 0 && index < gd.Rows*gd.Cols {
+			level.Tiles[index].TileType = FLOOR
 			level.Tiles[index].Blocked = false
 			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
 			if err != nil {
@@ -171,7 +182,7 @@ func (level Level) InBounds(x, y int) bool {
 
 func (level Level) IsOpaque(x, y int) bool {
 	idx := level.GetIndexFromXY(x, y)
-	return level.Tiles[idx].Blocked
+	return level.Tiles[idx].TileType == WALL
 }
 
 func (level *Level) DrawLevel(screen *ebiten.Image) {

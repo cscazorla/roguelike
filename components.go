@@ -4,6 +4,8 @@ import "github.com/hajimehoshi/ebiten/v2"
 
 type Player struct{}
 
+type Monster struct{}
+
 type Position struct {
 	X int
 	Y int
