@@ -11,8 +11,8 @@ type GameData struct {
 // NewGameData creates a fully populated GameData Struct.
 func NewGameData() GameData {
 	g := GameData{
-		ScreenWidth:  80,
-		ScreenHeight: 50,
+		ScreenWidth:  40,
+		ScreenHeight: 25,
 		TileWidth:    16,
 		TileHeight:   16,
 	}
