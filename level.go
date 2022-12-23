@@ -36,16 +36,16 @@ func NewLevel() Level {
 // This coordinate is logical tiles, not pixels.
 func (level *Level) GetIndexFromXY(x int, y int) int {
 	gd := NewGameData()
-	return (y * gd.ScreenWidth) + x
+	return (y * gd.Cols) + x
 }
 
 // createTiles creates a map of all walls as a baseline for carving out a level.
 func (level *Level) createTiles() []MapTile {
 	gd := NewGameData()
-	tiles := make([]MapTile, gd.ScreenHeight*gd.ScreenWidth)
+	tiles := make([]MapTile, gd.Rows*gd.Cols)
 	index := 0
-	for x := 0; x < gd.ScreenWidth; x++ {
-		for y := 0; y < gd.ScreenHeight; y++ {
+	for x := 0; x < gd.Cols; x++ {
+		for y := 0; y < gd.Rows; y++ {
 			index = level.GetIndexFromXY(x, y)
 			wall, _, err := ebitenutil.NewImageFromFile("assets/wall.png")
 			if err != nil {
@@ -90,8 +90,8 @@ func (level *Level) GenerateLevelTiles() {
 	for idx := 0; idx < MAX_ROOMS; idx++ {
 		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
 		h := GetRandomBetween(MIN_SIZE, MAX_SIZE)
-		x := GetDiceRoll(gd.ScreenWidth-w-1) - 1
-		y := GetDiceRoll(gd.ScreenHeight-h-1) - 1
+		x := GetDiceRoll(gd.Cols-w-1) - 1
+		y := GetDiceRoll(gd.Rows-h-1) - 1
 
 		new_room := NewRect(x, y, w, h)
 		okToAdd := true
@@ -110,8 +110,8 @@ func (level *Level) GenerateLevelTiles() {
 
 func (level *Level) DrawLevel(screen *ebiten.Image) {
 	gd := NewGameData()
-	for x := 0; x < gd.ScreenWidth; x++ {
-		for y := 0; y < gd.ScreenHeight; y++ {
+	for x := 0; x < gd.Cols; x++ {
+		for y := 0; y < gd.Rows; y++ {
 			tile := level.Tiles[level.GetIndexFromXY(x, y)]
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))

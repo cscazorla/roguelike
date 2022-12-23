@@ -50,12 +50,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.Debug {
 		gd := NewGameData()
 		debug := fmt.Sprintf(
-			"FPS: %.0f\nGame size (rows x cols): %dx%d\nGame dimensions (px): %dx%d",
+			"FPS: %.0f\nSize: %d rows x %d cols\nDimensions: %dx%dpx",
 			ebiten.ActualFPS(),
-			gd.ScreenWidth,
-			gd.ScreenHeight,
-			gd.TileWidth*gd.ScreenWidth,
-			gd.TileHeight*gd.ScreenHeight)
+			gd.Cols,
+			gd.Rows,
+			gd.GameWidth(),
+			gd.GameHeight())
 		ebitenutil.DebugPrint(screen, debug)
 	}
 
@@ -65,7 +65,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // and returns the game's logical screen size.
 func (g *Game) Layout(w, h int) (int, int) {
 	gd := NewGameData()
-	return gd.TileWidth * gd.ScreenWidth, gd.TileHeight * gd.ScreenHeight
+	return gd.GameWidth(), gd.GameHeight()
 }
 
 func main() {
