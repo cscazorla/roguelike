@@ -12,10 +12,12 @@ import (
 
 // Game holds all data the entire game will need.
 type Game struct {
-	Debug     bool
-	Map       GameMap
-	World     *ecs.Manager
-	WorldTags map[string]ecs.Tag
+	Debug       bool
+	Map         GameMap
+	World       *ecs.Manager
+	WorldTags   map[string]ecs.Tag
+	Turn        TurnState
+	TurnCounter int
 }
 
 // NewGame creates a new Game Object and initializes the data
@@ -26,15 +28,23 @@ func NewGame() *Game {
 	world, tags := InitializeWorld(g.Map.CurrentLevel)
 	g.World = world
 	g.WorldTags = tags
+	g.Turn = PlayerTurn
+	g.TurnCounter = 0
 	return g
 }
 
 // Update is called on each frame loop
 // The default value is 1/60 [s]
 func (g *Game) Update() error {
-	// Systems
-	TryMovePlayer(g)
-
+	g.TurnCounter++
+	// Update is called 60 times a second, so this
+	// just adds a small delay which is
+	// good enough for a turn-based game.
+	if g.Turn == PlayerTurn && g.TurnCounter > 20 {
+		TryMovePlayer(g)
+	}
+	// TODO: just for now
+	g.Turn = PlayerTurn
 	return nil
 }
 
@@ -50,12 +60,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.Debug {
 		gd := NewGameData()
 		debug := fmt.Sprintf(
-			"FPS: %.0f\nSize: %d rows x %d cols\nDimensions: %dx%dpx",
+			"FPS: %.0f\nSize: %d rows x %d cols\nDimensions: %dx%dpx\nTurnCounter: %d",
 			ebiten.ActualFPS(),
 			gd.Cols,
 			gd.Rows,
 			gd.GameWidth(),
-			gd.GameHeight())
+			gd.GameHeight(),
+			g.TurnCounter)
 		ebitenutil.DebugPrint(screen, debug)
 	}
 

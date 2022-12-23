@@ -24,7 +24,7 @@ This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) ti
 - [x] Collisions with walls
 - [x] Rooms
 - [x] Corridors
-- [ ] Turn based
+- [x] Turn based
 - [ ] Field of View
 - [ ] Monsters
 - [ ] Monsters Pathfinding
