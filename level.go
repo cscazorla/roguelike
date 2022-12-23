@@ -11,10 +11,11 @@ import (
 
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
-	PixelX  int // Upper left corner of the tile
-	PixelY  int
-	Blocked bool          // The tile should block the player or monster ?
-	Image   *ebiten.Image // Pointer to an ebiten Image
+	PixelX     int // Upper left corner of the tile
+	PixelY     int
+	Blocked    bool          // The tile should block the player or monster ?
+	Image      *ebiten.Image // Pointer to an ebiten Image
+	IsRevealed bool          // Has the tile has, at one time, been revealed to us by FoV?
 }
 
 // Level holds the tile information for a complete dungeon level.
@@ -56,10 +57,11 @@ func (level *Level) createTiles() []MapTile {
 				log.Fatal(err)
 			}
 			tile := MapTile{
-				PixelX:  x * gd.TileWidth,
-				PixelY:  y * gd.TileHeight,
-				Blocked: true,
-				Image:   wall,
+				PixelX:     x * gd.TileWidth,
+				PixelY:     y * gd.TileHeight,
+				Blocked:    true,
+				Image:      wall,
+				IsRevealed: false,
 			}
 			tiles[index] = tile
 		}
@@ -176,10 +178,18 @@ func (level *Level) DrawLevel(screen *ebiten.Image) {
 	gd := NewGameData()
 	for x := 0; x < gd.Cols; x++ {
 		for y := 0; y < gd.Rows; y++ {
-			if level.PlayerVisible.IsVisible(x, y) {
-				tile := level.Tiles[level.GetIndexFromXY(x, y)]
+			idx := level.GetIndexFromXY(x, y)
+			tile := level.Tiles[idx]
+			isVisible := level.PlayerVisible.IsVisible(x, y)
+			if isVisible {
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
+				screen.DrawImage(tile.Image, op)
+				level.Tiles[idx].IsRevealed = true
+			} else if tile.IsRevealed {
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))
+				op.ColorM.Scale(1.0, 1.0, 1.0, 0.25)
 				screen.DrawImage(tile.Image, op)
 			}
 		}
