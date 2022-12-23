@@ -90,8 +90,8 @@ func (level *Level) GenerateLevelTiles() {
 	for idx := 0; idx < MAX_ROOMS; idx++ {
 		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
 		h := GetRandomBetween(MIN_SIZE, MAX_SIZE)
-		x := GetDiceRoll(gd.Cols-w-1) - 1
-		y := GetDiceRoll(gd.Rows-h-1) - 1
+		x := GetDiceRoll(gd.Cols - w - 1)
+		y := GetDiceRoll(gd.Rows - h - 1)
 
 		new_room := NewRect(x, y, w, h)
 		okToAdd := true
