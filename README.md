@@ -23,7 +23,7 @@ This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) ti
 - [x] Adding ECS capabilities
 - [x] Collisions with walls
 - [x] Rooms
-- [ ] Corridors
+- [x] Corridors
 - [ ] Turn based
 - [ ] Field of View
 - [ ] Monsters

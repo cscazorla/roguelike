@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -86,6 +87,7 @@ func (level *Level) GenerateLevelTiles() {
 	gd := NewGameData()
 	tiles := level.createTiles()
 	level.Tiles = tiles
+	contains_rooms := false
 
 	for idx := 0; idx < MAX_ROOMS; idx++ {
 		w := GetRandomBetween(MIN_SIZE, MAX_SIZE)
@@ -103,7 +105,53 @@ func (level *Level) GenerateLevelTiles() {
 		}
 		if okToAdd {
 			level.createRoom(new_room)
+			if contains_rooms {
+				newX, newY := new_room.Center()
+				prevX, prevY := level.Rooms[len(level.Rooms)-1].Center()
+
+				coinflip := GetDiceRoll(2)
+
+				if coinflip == 2 {
+					level.createHorizontalTunnel(prevX, newX, prevY)
+					level.createVerticalTunnel(prevY, newY, newX)
+				} else {
+					level.createHorizontalTunnel(prevX, newX, newY)
+					level.createVerticalTunnel(prevY, newY, prevX)
+				}
+			}
 			level.Rooms = append(level.Rooms, new_room)
+			contains_rooms = true
+		}
+	}
+}
+
+func (level *Level) createHorizontalTunnel(x1 int, x2 int, y int) {
+	gd := NewGameData()
+	for x := math.Min(float64(x1), float64(x2)); x < math.Max(float64(x1), float64(x2))+1; x++ {
+		index := level.GetIndexFromXY(int(x), y)
+		if index > 0 && index < gd.Rows*gd.Cols {
+			level.Tiles[index].Blocked = false
+			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
+			if err != nil {
+				log.Fatal(err)
+			}
+			level.Tiles[index].Image = floor
+		}
+	}
+}
+
+func (level *Level) createVerticalTunnel(y1 int, y2 int, x int) {
+	gd := NewGameData()
+	for y := math.Min(float64(y1), float64(y2)); y < math.Max(float64(y1), float64(y2))+1; y++ {
+		index := level.GetIndexFromXY(x, int(y))
+
+		if index > 0 && index < gd.Rows*gd.Cols {
+			level.Tiles[index].Blocked = false
+			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
+			if err != nil {
+				log.Fatal(err)
+			}
+			level.Tiles[index].Image = floor
 		}
 	}
 }
