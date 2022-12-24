@@ -19,9 +19,14 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	position = manager.NewComponent()
 	renderable = manager.NewComponent()
 	movable := manager.NewComponent()
+	monster := manager.NewComponent()
 
-	// Load image for the player
+	// Load images for player and monster
 	playerImg, _, err := ebitenutil.NewImageFromFile("assets/player.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	monsterImg, _, err := ebitenutil.NewImageFromFile("assets/monster.png")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,6 +46,22 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 			X: x,
 			Y: y,
 		})
+
+	// Add a Monster in each room except the player's room
+	for _, room := range startingLevel.Rooms {
+		if room.X1 != startingRoom.X1 {
+			mX, mY := room.Center()
+			manager.NewEntity().
+				AddComponent(monster, Monster{}).
+				AddComponent(renderable, &Renderable{
+					Image: monsterImg,
+				}).
+				AddComponent(position, &Position{
+					X: mX,
+					Y: mY,
+				})
+		}
+	}
 
 	// Views
 	players := ecs.BuildTag(player, position)

@@ -28,9 +28,9 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles         []MapTile
-	Rooms         []Rect
-	PlayerVisible *fov.View
+	Tiles     []MapTile
+	Rooms     []Rect
+	PlayerFoV *fov.View
 }
 
 // NewLevel creates a new game level in a dungeon.
@@ -39,7 +39,7 @@ func NewLevel() Level {
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
-	l.PlayerVisible = fov.New()
+	l.PlayerFoV = fov.New()
 	return l
 }
 
@@ -191,7 +191,7 @@ func (level *Level) DrawLevel(screen *ebiten.Image) {
 		for y := 0; y < gd.Rows; y++ {
 			idx := level.GetIndexFromXY(x, y)
 			tile := level.Tiles[idx]
-			isVisible := level.PlayerVisible.IsVisible(x, y)
+			isVisible := level.PlayerFoV.IsVisible(x, y)
 			if isVisible {
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(tile.PixelX), float64(tile.PixelY))

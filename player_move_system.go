@@ -29,7 +29,7 @@ func TryMovePlayer(g *Game) {
 		if !tile.Blocked {
 			pos.X += x
 			pos.Y += y
-			level.PlayerVisible.Compute(level, pos.X, pos.Y, 5)
+			level.PlayerFoV.Compute(level, pos.X, pos.Y, 5)
 		}
 	}
 
