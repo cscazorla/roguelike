@@ -28,7 +28,7 @@ type MapTile struct {
 
 // Level holds the tile information for a complete dungeon level.
 type Level struct {
-	Tiles     []MapTile
+	Tiles     []*MapTile
 	Rooms     []Rect
 	PlayerFoV *fov.View
 }
@@ -53,9 +53,9 @@ func (level *Level) GetIndexFromXY(x int, y int) int {
 }
 
 // createTiles creates a map of all walls as a baseline for carving out a level.
-func (level *Level) createTiles() []MapTile {
+func (level *Level) createTiles() []*MapTile {
 	gd := NewGameData()
-	tiles := make([]MapTile, gd.Rows*gd.Cols)
+	tiles := make([]*MapTile, gd.Rows*gd.Cols)
 	index := 0
 	for x := 0; x < gd.Cols; x++ {
 		for y := 0; y < gd.Rows; y++ {
@@ -72,7 +72,7 @@ func (level *Level) createTiles() []MapTile {
 				IsRevealed: false,
 				TileType:   WALL,
 			}
-			tiles[index] = tile
+			tiles[index] = &tile
 		}
 	}
 	return tiles

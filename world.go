@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/bytearena/ecs"
@@ -9,6 +10,7 @@ import (
 
 var position *ecs.Component
 var renderable *ecs.Component
+var monster *ecs.Component
 
 func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	tags := make(map[string]ecs.Tag)
@@ -19,7 +21,7 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	position = manager.NewComponent()
 	renderable = manager.NewComponent()
 	movable := manager.NewComponent()
-	monster := manager.NewComponent()
+	monster = manager.NewComponent()
 
 	// Load images for player and monster
 	playerImg, _, err := ebitenutil.NewImageFromFile("assets/player.png")
@@ -48,11 +50,13 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 		})
 
 	// Add a Monster in each room except the player's room
-	for _, room := range startingLevel.Rooms {
+	for idx, room := range startingLevel.Rooms {
 		if room.X1 != startingRoom.X1 {
 			mX, mY := room.Center()
 			manager.NewEntity().
-				AddComponent(monster, Monster{}).
+				AddComponent(monster, &Monster{
+					Name: "Ghost " + fmt.Sprint(idx),
+				}).
 				AddComponent(renderable, &Renderable{
 					Image: monsterImg,
 				}).
@@ -68,6 +72,8 @@ func InitializeWorld(startingLevel Level) (*ecs.Manager, map[string]ecs.Tag) {
 	tags["players"] = players
 	renderables := ecs.BuildTag(renderable, position)
 	tags["renderables"] = renderables
+	monsters := ecs.BuildTag(monster, position)
+	tags["monsters"] = monsters
 
 	return manager, tags
 }
