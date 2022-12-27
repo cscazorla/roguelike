@@ -17,15 +17,7 @@ func GetDiceRoll(num int) int {
 	return int(x.Int64()) + 1
 }
 
-// Brute-force method to return a number between the
-// two numbers inclusive.
+// Return a number between two numbers inclusive.
 func GetRandomBetween(low int, high int) int {
-	var randy int = -1
-	for {
-		randy = GetDiceRoll(high)
-		if randy >= low {
-			break
-		}
-	}
-	return randy
+	return GetDiceRoll(high-low) + high
 }

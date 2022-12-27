@@ -16,6 +16,26 @@ const (
 	FLOOR
 )
 
+var floor *ebiten.Image
+var wall *ebiten.Image
+
+func loadTileImages() {
+	if floor != nil && wall != nil {
+		return
+	}
+	var err error
+
+	floor, _, err = ebitenutil.NewImageFromFile("assets/floor.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	wall, _, err = ebitenutil.NewImageFromFile("assets/wall.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 // Each of the map tiles will be represented  by one of these structures
 type MapTile struct {
 	PixelX     int // Upper left corner of the tile
@@ -36,6 +56,7 @@ type Level struct {
 // NewLevel creates a new game level in a dungeon.
 func NewLevel() Level {
 	l := Level{}
+	loadTileImages()
 	rooms := make([]Rect, 0)
 	l.Rooms = rooms
 	l.GenerateLevelTiles()
@@ -60,10 +81,6 @@ func (level *Level) createTiles() []*MapTile {
 	for x := 0; x < gd.Cols; x++ {
 		for y := 0; y < gd.Rows; y++ {
 			index = level.GetIndexFromXY(x, y)
-			wall, _, err := ebitenutil.NewImageFromFile("assets/wall.png")
-			if err != nil {
-				log.Fatal(err)
-			}
 			tile := MapTile{
 				PixelX:     x * gd.TileWidth,
 				PixelY:     y * gd.TileHeight,
@@ -84,10 +101,6 @@ func (level *Level) createRoom(room Rect) {
 			index := level.GetIndexFromXY(x, y)
 			level.Tiles[index].Blocked = false
 			level.Tiles[index].TileType = FLOOR
-			floor, _, err := ebitenutil.NewImageFromFile("assets/floor.png")
-			if err != nil {
-				log.Fatal(err)
-			}
 			level.Tiles[index].Image = floor
 		}
 	}
