@@ -19,15 +19,20 @@ func UpdateMonster(game *Game) {
 		monsterFoV := fov.New()
 		monsterFoV.Compute(l, monsterPos.X, monsterPos.Y, 8)
 		if monsterFoV.IsVisible(playerPosition.X, playerPosition.Y) {
-			astar := AStar{}
-			path := astar.GetPath(l, monsterPos, &playerPosition)
-			if len(path) > 1 {
-				nextTile := l.Tiles[l.GetIndexFromXY(path[1].X, path[1].Y)]
-				if !nextTile.Blocked {
-					l.Tiles[l.GetIndexFromXY(monsterPos.X, monsterPos.Y)].Blocked = false
-					monsterPos.X = path[1].X
-					monsterPos.Y = path[1].Y
-					nextTile.Blocked = true
+			if monsterPos.GetManhattanDistance(&playerPosition) == 1 {
+				//The monster is right next to the player. Just smack him down
+				AttackSystem(game, monsterPos, &playerPosition)
+			} else {
+				astar := AStar{}
+				path := astar.GetPath(l, monsterPos, &playerPosition)
+				if len(path) > 1 {
+					nextTile := l.Tiles[l.GetIndexFromXY(path[1].X, path[1].Y)]
+					if !nextTile.Blocked {
+						l.Tiles[l.GetIndexFromXY(monsterPos.X, monsterPos.Y)].Blocked = false
+						monsterPos.X = path[1].X
+						monsterPos.Y = path[1].Y
+						nextTile.Blocked = true
+					}
 				}
 			}
 		}

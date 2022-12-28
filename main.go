@@ -41,7 +41,7 @@ func (g *Game) Update() error {
 	// just adds a small delay which is
 	// good enough for a turn-based game.
 	if g.Turn == PlayerTurn && g.TurnCounter > 20 {
-		TryMovePlayer(g)
+		TakePlayerAction(g)
 	}
 
 	if g.Turn == MonsterTurn {

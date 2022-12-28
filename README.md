@@ -28,7 +28,7 @@ This game uses [Kenney's Tiny Dungeon](https://kenney.nl/assets/tiny-dungeon) ti
 - [x] Field of View
 - [x] Monsters
 - [x] Monsters Pathfinding
-- [ ] Basic combat
+- [x] Basic combat
 - [ ] UI
 - [ ] Player HUD
 
